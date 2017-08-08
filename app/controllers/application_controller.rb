@@ -1,11 +1,11 @@
 require "application_responder"
 
-class ApplicationController < ActionController::Base
+class ApplicationController < ActionController::API
   self.responder = ApplicationResponder
   respond_to :json
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
+  # protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
   after_action :cors_set_access_control_headers
   skip_before_action :authenticate_user, only: [:route_options], raise: false
 
