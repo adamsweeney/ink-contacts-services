@@ -1,14 +1,13 @@
 require "application_responder"
 
 class ApplicationController < ActionController::API
-  self.responder = ApplicationResponder
-  respond_to :json
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
-  # protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
-  after_action :cors_set_access_control_headers
-  skip_before_action :authenticate_user, only: [:route_options], raise: false
+  include AbstractController::Translation
 
+  self.responder = ApplicationResponder
+  before_action :authenticate_user_from_token!
+  respond_to :json
+  after_action :cors_set_access_control_headers
+  #skip_before_action :authenticate_user, only: [:route_options], raise: false
 
   def route_options
     cors_preflight_check
@@ -31,7 +30,40 @@ class ApplicationController < ActionController::API
     end
   end
 
-  def current_user
-    User.first
+  # User Authentication
+  # Authenticates the user with OAuth2 Resource Owner Password Credentials Grant
+  def authenticate_user_from_token!
+    auth_token = request.headers['Authorization']
+    if auth_token
+      authenticate_with_auth_token auth_token
+    else
+      authentication_error
+    end
+  end
+
+  private
+
+  def authenticate_with_auth_token(auth_token)
+    unless auth_token.include?(':')
+      authentication_error
+      return
+    end
+
+    user_id = auth_token.split(':').first
+    user = User.find_by(id: user_id)
+
+    if user && Devise.secure_compare(user.access_token, auth_token)
+      # User can access
+      sign_in user, store: false
+    else
+      authentication_error
+    end
+  end
+
+  # Authentication Failure
+  # Renders a 401 error
+  def authentication_error
+    # User's token is either invalid or not in the right format
+    render json: { error: t('unauthorized') }, status: 401  # Authentication timeout
   end
 end
