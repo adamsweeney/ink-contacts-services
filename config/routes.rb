@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
 	namespace :api, { defaults: { format: :json } } do
 		resource :login, only: [:create], controller: :sessions
+    resource :signup, only: [:create], controller: :registrations
     resources :contacts, except: [:new, :edit]
 	end
 end

@@ -3,12 +3,10 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
    after_create :update_access_token!
-
-   validates :username, presence: true
    validates :email, presence: true
 
    has_many :contacts
-   
+
    private
 
    # Sets the token to the id and generated token by devise

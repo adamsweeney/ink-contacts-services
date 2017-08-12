@@ -6,29 +6,6 @@ class ApplicationController < ActionController::API
   self.responder = ApplicationResponder
   before_action :authenticate_user_from_token!
   respond_to :json
-  after_action :cors_set_access_control_headers
-  #skip_before_action :authenticate_user, only: [:route_options], raise: false
-
-  def route_options
-    cors_preflight_check
-  end
-
-  def cors_set_access_control_headers
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, PATCH, DELETE, OPTIONS'
-    response.headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Authorization, Token, Auth-Token, Email'
-    response.headers['Access-Control-Max-Age'] = "1728000"
-  end
-
-  def cors_preflight_check
-    if request.method == 'OPTIONS'
-      request.headers['Access-Control-Allow-Origin'] = '*'
-      request.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, PATCH, DELETE, OPTIONS'
-      request.headers['Access-Control-Allow-Headers'] = 'X-Requested-With, X-Prototype-Version, Token, Auth-Token, Email'
-      request.headers['Access-Control-Max-Age'] = '1728000'
-      render text: '', content_type: 'text/plain'
-    end
-  end
 
   # User Authentication
   # Authenticates the user with OAuth2 Resource Owner Password Credentials Grant
@@ -64,6 +41,6 @@ class ApplicationController < ActionController::API
   # Renders a 401 error
   def authentication_error
     # User's token is either invalid or not in the right format
-    render json: { error: t('unauthorized') }, status: 401  # Authentication timeout
+    render json: { error: 'Unauthorized' }, status: 401  # Authentication timeout
   end
 end
