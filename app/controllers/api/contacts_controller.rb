@@ -10,12 +10,18 @@ class Api::ContactsController < ApplicationController
 		respond_with current_user.contacts.find_by(id: params[:id])
 	end
 
+	def update
+		@contact = current_user.contacts.find_by(id: params[:id])
+		@contact.update(contact_params)
+		respond_with @contact
+	end
+
 	def index
-		respond_with current_user.contacts
+		respond_with current_user.contacts.order(first_name: :asc)
 	end
 
 	def destroy
-		@contact = current_user.stocks.find_by(id: params[:id])
+		@contact = current_user.contacts.find_by(id: params[:id])
 		@contact.destroy
 		respond_with @contact
 	end
