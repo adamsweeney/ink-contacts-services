@@ -17,7 +17,7 @@ class Api::ContactsController < ApplicationController
 	end
 
 	def index
-		respond_with current_user.contacts.order(first_name: :asc)
+		respond_with current_user.contacts
 	end
 
 	def destroy
@@ -29,6 +29,6 @@ class Api::ContactsController < ApplicationController
 	private
 
 	def contact_params
-    params.permit(:first_name, :last_name, :email, :phone_number)
+    params.permit(:first_name, :last_name, :email, :phone_number, :avatar)
   end
 end

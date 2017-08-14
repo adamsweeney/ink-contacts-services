@@ -33,6 +33,7 @@ gem 'responders', '~> 2.0'
 gem 'rack-cors', '~> 1.0.1'
 gem 'devise', '~> 4.3.0'
 gem 'active_model_serializers', '~> 0.8.3'
+gem "paperclip", "~> 5.0.0"
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
